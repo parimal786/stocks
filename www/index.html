@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trader Desktop</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css" type="text/css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	
+    <script src="1.js"></script>
+    <script src="2.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/feed-socketio.js"></script>
+    <!--<script src="js/feed-mock.js"></script>-->
+    <script type="text/jsx" src="js/app.js"></script>
+</head>
+
+<body>
+<div id="container" style="height: 500px; min-width: 500px"></div>
+<script>
+  var socket = io.connect('http://kaboom.rksv.net/watch');
+
+  console.log(socket);
+        this.socket.on('connect', function(data) {
+                console.info('Successfully connected!');
+        });
+
+ socket.on('data', function(data, callback) {
+        console.info('Successfully data recieved!');
+        console.log('Response: ' + data);
+        //here i am acknowledging
+
+        callback(1);
+
+        });
+
+                 // socket.emit('ping', {});
+ socket.emit('sub', {state: true});// starts sending msg
+
+        setTimeout(function(){
+                console.info('Send');
+         socket.emit('unsub', {state: false});
+
+         }, 3000);
+
+        this.socket.on('error', function(reason) {
+                console.error("error");
+                console.error(reason);
+        });
+$(function () {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.json&callback=?', function (data) {
+//    $.getJSON('http://kaboom.rksv.net/api/historical', function (data) {
+        // create the chart
+        $('#container').highcharts('StockChart', {
+		turboThreshold: 0,
+            tooltip: {
+                useHTML: true,
+                formatter: function () {
+
+
+
+                    /*
+                     * tooltip formatter function
+                     *
+                     */
+                    var d = new Date(this.x);
+                    var s = '';
+
+                    s += '<b>' + Highcharts.dateFormat('%b %e, %Y [%H:%M]', this.x) + '</b><br />';
+
+
+                    $.each(this.points, function (i, point) {
+//                        console.log(point);
+                        s += '<b><span style = "color:' + point.series.color + ';">' + point.series.name + ' : ' + Highcharts.numberFormat(point.point.close, 3) + '</b><br />';
+                        s += '<span style ="color:' + point.series.color + ';">Open</span>: ' + point.point.open +
+                            '<br/><span style ="color:' + point.series.color + ';">High</span>: ' + point.point.high +
+                            '<br/><span style ="color:' + point.series.color + ';">Low</span>: ' + point.point.low +
+                            '<br/><span style ="color:' + point.series.color + ';">Close</span>: ' + point.point.close + '<br/>';
+
+                    });
+                return s;
+            }
+        },
+        series: [{
+            //type : 'ohlc',
+            name: 'AAPL Stock Price',
+                data: data,
+        }]
+        });
+    });
+});
+</script>
+
+<div class="container" id="main"></div>
+
+</body>
+
+</html>

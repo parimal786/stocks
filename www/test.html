@@ -1,0 +1,31 @@
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+  var socket = io.connect('http://kaboom.rksv.net/watch');
+
+  console.log(socket);
+	this.socket.on('connect', function(data) {
+		console.info('Successfully connected!');	 
+	});
+
+ socket.on('data', function(data, callback) { 
+ 	console.info('Successfully data recieved!');
+	console.log('Response: ' + data); 
+	//here i am acknolegeing
+	callback(1);
+		
+	});
+
+		 // socket.emit('ping', {}); 
+ socket.emit('sub', {state: true});
+
+	setTimeout(function(){
+	 	console.info('Send'); 
+	 socket.emit('unsub', {state: false});
+
+	 }, 3000);
+
+	this.socket.on('error', function(reason) {
+		console.error("error");
+		console.error(reason);
+	});
+</script>
